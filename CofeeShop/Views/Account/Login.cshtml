@@ -1,1 +1,130 @@
-﻿login page
+﻿@{
+    ViewData["Title"] = "ورود / ثبت نام";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/login/login.css" />
+    <link rel="stylesheet" href="~/css/login/all-fonts.min.css" />
+</head>
+
+<body>
+
+    <!-- FORM CONTAINER -->
+    <div class="form-container">
+        <h2 class="form-title">Login Form</h2>
+        <!-- buttons -->
+        <div class="header-buttons">
+            <button type="button" class="header-btn login-btn active">Login</button>
+            <button type="button" class="header-btn register-btn">Register</button>
+        </div>
+        <!-- forms -->
+        <div class="form-wrapper">
+            <!--------- LOGIN FORM --------->
+            <form action="#" class="form login-form active">
+                <div class="input-box">
+                    <input type="text"
+                           name="email"
+                           autocomplete="off"
+                           class="form-input"
+                           id="login-email-input"
+                           placeholder="Email Address" />
+                    <!-- alert text -->
+                    <span class="alert-text" id="login-email-alert"></span>
+                </div>
+                <div class="input-box">
+                    <div class="password-box-inner">
+                        <input type="password"
+                               name="password"
+                               class="form-input password-input"
+                               id="login-password-input"
+                               placeholder="Password" />
+                        <!-- eye button -->
+                        <span class="eye-btn">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+
+                    <!-- alert text -->
+                    <span class="alert-text" id="login-password-alert"></span>
+                </div>
+
+                <!-- forgot password -->
+                <a href="#" class="forgot-pass-text">Forgot Password?</a>
+
+                <button type="submit" class="form-btn">Login</button>
+
+                <!-- NAVIGAGTE TO SIGNUP FORM -->
+                <div class="navigate-link-wrapper">
+                    Not Registered?
+                    <a href="#" class="navigate-link" data-link="register">Signup</a>
+                </div>
+            </form>
+
+            <!--------- REGISTER FORM --------->
+            <form action="#" class="form register-form">
+                <div class="input-box">
+                    <input type="text"
+                           name="email"
+                           autocomplete="off"
+                           class="form-input"
+                           id="register-email-input"
+                           placeholder="Email Address" />
+
+                    <!-- alert text -->
+                    <span class="alert-text" id="register-email-alert"></span>
+                </div>
+                <div class="input-box">
+                    <div class="password-box-inner">
+                        <input type="password"
+                               name="password"
+                               class="form-input password-input"
+                               id="register-password-input"
+                               placeholder="Password" />
+                        <!-- eye button -->
+                        <span class="eye-btn">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+
+                    <!-- alert text -->
+                    <span class="alert-text" id="register-password-alert"></span>
+                </div>
+                <div class="input-box">
+                    <div class="password-box-inner">
+                        <input type="password"
+                               name="password"
+                               class="form-input password-input"
+                               id="register-confirm-password-input"
+                               placeholder="Confirm Password" />
+                        <!-- eye button -->
+                        <span class="eye-btn">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                    <!-- alert text -->
+                    <span class="alert-text"
+                          id="register-confirm-password-alert"></span>
+                </div>
+
+                <button type="submit" class="form-btn">Sign Up</button>
+
+                <!-- NAVIGAGTE TO LOGIN FORM -->
+                <div class="navigate-link-wrapper">
+                    Have An Account?
+                    <a href="#" class="navigate-link" data-link="login">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="~/js/main.js"></script>
+</body>
+</html>
