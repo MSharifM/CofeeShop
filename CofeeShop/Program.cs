@@ -1,5 +1,9 @@
+using CoffeeShop.Core.Services.Interfaces;
+using CoffeeShop.Core.Services;
 using CoffeeShop.DataLayer.Context;
 using Microsoft.EntityFrameworkCore;
+using CoffeeShop.DataLayer.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +22,16 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 
 #endregion
 
+#region IoC
+
+builder.Services.AddTransient<IUserService, UserService>();
+
+#endregion
+
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,6 +47,7 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

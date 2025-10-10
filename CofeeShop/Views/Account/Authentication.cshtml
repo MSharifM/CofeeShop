@@ -1,0 +1,44 @@
+﻿@model CoffeeShop.Core.DTOs.Account.AuthenticationViewModel
+
+@{
+    ViewData["Title"] = "ورود / ثبت نام";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/login/login.css" />
+    <link rel="stylesheet" href="~/css/login/all-fonts.min.css" />
+</head>
+
+<body>
+
+    <!-- FORM CONTAINER -->
+    <div class="form-container">
+        <h2 class="form-title">Login Form</h2>
+        <!-- buttons -->
+        <div class="header-buttons">
+            <button type="button" class="header-btn login-btn active">Login</button>
+            <button type="button" class="header-btn register-btn">Register</button>
+        </div>
+        <!-- forms -->
+        <div class="form-wrapper">
+            <!--------- LOGIN FORM --------->
+            <partial name="_LoginForm" model="Model.Login" />
+
+            <!--------- REGISTER FORM --------->
+            <partial name="_RegisterForm" model="Model.Register" />
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="~/js/main.js"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+        
+</body>
+</html>

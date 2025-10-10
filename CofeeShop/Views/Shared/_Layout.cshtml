@@ -173,7 +173,7 @@
                 <span class="block w-px h-14 bg-white/20"></span>
                 <!-- LOGIN BUTTON -->
                 <div>
-                    <a asp-controller="Account" asp-action="Login" class="flex items-center gap-x-2.5 tracking-tithest">
+                    <a asp-controller="Account" asp-action="Authentication" class="flex items-center gap-x-2.5 tracking-tithest">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              fill="none"
                              viewBox="0 0 24 24"
@@ -184,7 +184,16 @@
                                   stroke-linejoin="round"
                                   d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                         </svg>
-                        <span class="hidden xl:inline-block">ورود | ثبت نام</span>
+                        @{
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                <span class="hidden xl:inline-block"> @User.Identity.Name حساب کاربری  </span>
+                            }
+                            else
+                            {
+                                <span class="hidden xl:inline-block">ورود | ثبت نام</span>
+                            }
+                        }
                     </a>
                 </div>
             </div>

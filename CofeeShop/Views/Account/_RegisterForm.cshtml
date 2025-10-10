@@ -1,0 +1,59 @@
+﻿@model CoffeeShop.Core.DTOs.Account.RegisterViewModel
+
+<form asp-action="Register" method="post" class="form register-form">
+    @if (ViewData["RegisterError"] is List<string> errors)
+    {
+        foreach (var error in errors)
+        {
+            <span class="alert-text">- @error</span>
+        }
+    }
+
+    <div class="input-box">
+        <input type="text"
+               asp-for="Email"
+               autocomplete="off"
+               class="form-input"
+               placeholder="Email Address" />
+
+        <!-- alert text -->
+        <span asp-validation-for="Email" class="alert-text" id="register-email-alert"></span>
+    </div>
+    <div class="input-box">
+        <div class="password-box-inner">
+            <input type="password"
+                   asp-for="Password"
+                   class="form-input password-input"
+                   placeholder="Password" />
+            <!-- eye button -->
+            <span class="eye-btn">
+                <i class="fa fa-eye"></i>
+            </span>
+        </div>
+
+        <!-- alert text -->
+        <span asp-validation-for="Password" class="alert-text" id="register-password-alert"></span>
+    </div>
+    <div class="input-box">
+        <div class="password-box-inner">
+            <input type="password"
+                   asp-for="ConfirmPassword"
+                   class="form-input password-input"
+                   placeholder="Confirm Password" />
+            <!-- eye button -->
+            <span class="eye-btn">
+                <i class="fa fa-eye"></i>
+            </span>
+        </div>
+        <!-- alert text -->
+        <span asp-validation-for="ConfirmPassword" class="alert-text" id="register-confirm-password-alert"></span>
+    </div>
+
+    <button type="submit" class="form-btn">Sign Up</button>
+
+    <!-- NAVIGAGTE TO LOGIN FORM -->
+    <div class="navigate-link-wrapper">
+        Have An Account?
+        <a href="#" class="navigate-link" data-link="login">Login</a>
+    </div>
+</form>
