@@ -14,15 +14,14 @@ namespace CoffeeShop.Core.Sender
 
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-            mail.From = new MailAddress(address: username, displayName: "BooK Store");
+            mail.From = new MailAddress(address: username, displayName: "Coffee Shop");
             mail.To.Add(to);
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = true;
 
             SmtpServer.Port = 587;
-            SmtpServer.Credentials = new System.Net.NetworkCredential(userName: username,
-                password: password);
+            SmtpServer.Credentials = new System.Net.NetworkCredential(userName: username, password: password);
             SmtpServer.EnableSsl = true;
 
             SmtpServer.Send(mail);
