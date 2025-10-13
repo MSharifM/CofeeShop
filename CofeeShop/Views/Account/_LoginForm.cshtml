@@ -1,5 +1,14 @@
 ﻿@model CoffeeShop.Core.DTOs.Account.LoginViewModel
-
+@{
+    if (ViewData["isConfirmed"] != null && ViewData["isConfirmed"].ToString() == false.ToString())
+    {
+        <div class="alert alert-danger" role="alert">
+            حساب شما فعال نشده است. ایمیل فعالسازی برای شما ارسال شده است.
+            <a href="#">ارسال دوباره</a>
+        </div>
+        //ToDo link to send email again
+    }
+}
 <form asp-action="Login" method="post" asp-route-returnUrl="@ViewData["returnUrl"]" class="form login-form active">
     <span class="alert-text">@ViewData["LoginError"]</span>
 

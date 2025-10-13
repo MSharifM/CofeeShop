@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "ایمیل قبلاً تایید شده";
+    string status = ViewData["ConfirmStatus"]?.ToString();
+    Layout = null;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css" />
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-image-side">
+            <img class="auth-image" src="~/images/@((status == "Success" || status == "AlreadyConfirmed") ? "email-confirmation-bg.jpg" : "email-error-bg.jpg")" alt="تایید ایمیل">
+            <div class="auth-image-overlay">
+                @Html.Raw(ViewData["Message"])
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="auth-header">
+                <div class="status-icon @(status == "AlreadyConfirmed"? "info" : status?.ToLower())">
+                    <i class="fas fa-@(status == "AlreadyConfirmed" ? "info" : status == "Success" ? "check" : status == "Error" ? "exclamation" : "question")-circle"></i>
+                </div>
+                @Html.Raw(ViewData["Message"])
+            </div>
+
+            <div class="confirmation-message">
+                <div class="message-content">
+                    @Html.Raw(ViewData["Discription"])
+                </div>
+
+                <div class="action-buttons">
+                    @{
+                        if (status == "AlreadyConfirmed" || status == "Success")
+                        {
+                            <a href="/Login" class="auth-btn primary-btn">
+                                <i class="fas fa-sign-in-alt"></i>
+                                ورود به حساب کاربری
+                            </a>
+                            <a href="/" class="auth-btn secondary-btn">
+                                <i class="fas fa-home"></i>
+                                بازگشت به صفحه اصلی
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Register" class="auth-btn secondary-btn">
+                                <i class="fas fa-user-plus"></i>
+                                ثبت‌نام مجدد
+                            </a>
+                            <a href="#" class="auth-btn outline-btn secondary-btn">
+                                <i class="fas fa-headset"></i>
+                                ارسال دوباره
+                            </a>
+                            //ToDo send confirm email again
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

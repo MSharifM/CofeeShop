@@ -9,11 +9,20 @@ namespace CoffeeShop.Core.Services.Interfaces
     {
         #region Account
 
-        Task<IdentityResult> RegisterAsync(RegisterViewModel user);
+        Task<IdentityResult> RegisterAsync(RegisterViewModel user, string baseUrl);
         Task<SignInResult> SignInAsync(LoginViewModel model);
         Task LogOutAsync();
         bool IsUserSignIn(ClaimsPrincipal user);
         Task<bool> IsExistEmailAsync(string email);
+        Task<IdentityResult> ConfirmEmailAsync(User user, string token);
+        Task<bool> IsEmailConfirmedAsync(string? userName, string? userId);
+
+        #endregion
+
+        #region User common methods
+
+        Task<User?> GetUserByIdAsync(string userId);
+        Task<User?> GetUserByUserName(string userName);
 
         #endregion
     }

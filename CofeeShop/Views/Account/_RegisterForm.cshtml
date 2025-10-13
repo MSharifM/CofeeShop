@@ -1,5 +1,12 @@
 ﻿@model CoffeeShop.Core.DTOs.Account.RegisterViewModel
-
+@{
+    if (@ViewData["RegisterMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            <h3>@ViewData["RegisterMessage"]</h3>
+        </div>
+    }
+}
 <form asp-action="Register" method="post" class="form register-form">
     @if (ViewData["RegisterError"] is List<string> errors)
     {

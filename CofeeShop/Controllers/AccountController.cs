@@ -56,10 +56,17 @@ namespace CoffeeShop.Controllers
                 }
             };
 
+            ViewData["returnUrl"] = returnUrl;
+
             if (!ModelState.IsValid)
                 return View("Authentication", viewModel);
 
-            ViewData["returnUrl"] = returnUrl;
+            var isConfirmed = await _userService.IsEmailConfirmedAsync(model.Email, null);
+            if (!isConfirmed)
+            {
+                ViewData["isConfirmed"] = false;
+                return View("Authentication", model);
+            }
 
             var result = await _userService.SignInAsync(model);
             if (result.Succeeded)
@@ -100,10 +107,13 @@ namespace CoffeeShop.Controllers
             if (!ModelState.IsValid)
                 return View("Authentication", viewModel);
 
-            var result = await _userService.RegisterAsync(model);
+            var result = await _userService.RegisterAsync(model, $"{Request.Scheme}://{Request.Host}");
 
             if (result.Succeeded)
-                return RedirectToAction("Index", "Home");
+            {
+                ViewData["RegisterMessage"] = "لینک فعال‌سازی به ایمیل شما ارسال شد. لطفاً ایمیل‌تان را بررسی کنید.";
+                return View("Authentication", viewModel);
+            }
 
             var errors = new List<string>();
             foreach (var error in result.Errors)
@@ -123,6 +133,61 @@ namespace CoffeeShop.Controllers
         {
             await _userService.LogOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+                return RedirectToAction("Index", "Home");
+
+            if (_userService.IsUserSignIn(User))
+                return RedirectToAction("Index", "Home");
+
+            //EmailAlreadyConfirmed
+            if (await _userService.IsEmailConfirmedAsync(null, userId))
+            {
+                ViewData["ConfirmStatus"] = "AlreadyConfirmed";
+                ViewData["Message"] = @"<h3>ایمیل شما قبلاً تایید شده</h3>
+                <p>حساب کاربری شما از قبل فعال می‌باشد</p>";
+                ViewData["Discription"] = @"<p><strong>توجه!</strong> آدرس ایمیل شما قبلاً تایید شده است.</p>
+                <p>نیازی به تایید مجدد نمی‌باشد و می‌توانید از حساب کاربری خود استفاده کنید.</p>";
+
+                return View();
+            }
+
+            var user = await _userService.GetUserByIdAsync(userId);
+            //user id is false
+            if (user is null)
+            {
+                ViewData["ConfirmStatus"] = "Error";
+                ViewData["Message"] = @"<h2>خطا در تایید ایمیل</h2>
+                <p>متأسفانه لینک تایید معتبر نمی‌باشد یا منقضی شده است</p>";
+                ViewData["Discription"] = @" <p><strong>خطا!</strong> لینک تایید ایمیل معتبر نمی‌باشد.</p>
+                <p>ممکن است لینک منقضی شده باشد یا قبلاً استفاده شده باشد.</p>";
+                return View();
+            }
+            var result = await _userService.ConfirmEmailAsync(user, token);
+
+            //Confirm is success 
+            if (result.Succeeded)
+            {
+                ViewData["ConfirmStatus"] = "Success";
+                ViewData["Message"] = @"<h2>تایید ایمیل با موفقیت انجام شد</h2>
+                <p>حساب کاربری شما فعال شد و می‌توانید از تمام امکانات سایت استفاده کنید</p>";
+                ViewData["Discription"] = @"<p><strong>تبریک!</strong> عملیات تایید ایمیل با موفقیت انجام شد.</p>
+                <p>هم اکنون می‌توانید وارد حساب کاربری خود شوید و از خدمات ما استفاده کنید.</p>";
+            }
+            else //Confirm is failed
+            {
+                ViewData["ConfirmStatus"] = "Error";
+                ViewData["Message"] = @"<h2>خطا در تایید ایمیل</h2>
+                <p>متأسفانه لینک تایید معتبر نمی‌باشد یا منقضی شده است</p>";
+                ViewData["Discription"] = @" <p><strong>خطا!</strong> لینک تایید ایمیل معتبر نمی‌باشد.</p>
+                <p>ممکن است لینک منقضی شده باشد یا قبلاً استفاده شده باشد.</p>";
+            }
+
+            return View();
         }
 
         [HttpPost]
