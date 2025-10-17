@@ -261,8 +261,7 @@ paket-files/
 .idea/
 *.sln.iml
 
-# CodeRush
-.cr/
+CofeeShop/wwwroot/fonts/*
 
 CofeeShop/Properties/launchSettings.json
 

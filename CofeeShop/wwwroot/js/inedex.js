@@ -134,6 +134,6 @@ scrollDown.addEventListener("click", () => {
   footer.scrollIntoView({ behavior: "smooth" });
 });
 scrollTop.addEventListener("click", () => {
-  const homeSection = document.querySelector(".home");
+    const homeSection = document.querySelector(".header");
   homeSection.scrollIntoView({ behavior: "smooth" });
 });
