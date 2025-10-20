@@ -190,6 +190,91 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userService.GetUserByEmailAsync(model.Email);
+            if (user == null)
+            {
+                model.ResultMessage = "در صورت وجود ایمیل، ایمیل بازیابی رمز عبور برای شما ارسال شد.";
+                model.Status = "Success";
+                return View(model);
+            }
+            if (!await _userService.IsEmailConfirmedAsync(email: model.Email))
+            {
+                model.ResultMessage = "حساب کاربری شما تایید نشده است. ابتدا حساب کاربری خود را فعال کنید.";
+                model.Status = "Error";
+                //ToDo send confirm email again
+                return View(model);
+            }
+
+            await _userService.SendResetPasswordEmailAsync(user, $"{Request.Scheme}://{Request.Host}");
+            model.ResultMessage = "در صورت وجود ایمیل، ایمیل بازیابی رمز عبور برای شما ارسال شد.";
+            model.Status = "Success";
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string userId, string token)
+        {
+            if (userId == null || token == null)
+                return RedirectToAction("Index", "Home");
+
+            if (_userService.IsUserSignIn(User))
+                return RedirectToAction("Index", "Home");
+
+            var user = await _userService.GetUserByIdAsync(userId);
+            //User id is false
+            if (user is null)
+            {
+                ViewData["LinkStatus"] = "Error";
+                return View();
+            }
+
+            var model = new ResetPasswordViewModel()
+            {
+                UserId = userId,
+                Token = token,
+                Password = "",
+                ConfirmPassword = ""
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userService.GetUserByIdAsync(model.UserId);
+            if (user is null)
+            {
+                ViewData["LinkStatus"] = "Error";
+                return View(model);
+            }
+
+            var result = await _userService.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+                return RedirectToAction("Login", new { resetPassword = true });
+
+            ViewData["LinkStatus"] = "Error";
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> IsEmailInUse(string email)

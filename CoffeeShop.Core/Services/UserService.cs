@@ -148,21 +148,97 @@ namespace CoffeeShop.Core.Services
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-        public async Task<bool> IsEmailConfirmedAsync(string? userName, string? userId)
+        public async Task<bool> IsEmailConfirmedAsync(string? userName = null, string? userId = null, string? email = null)
         {
-            User? user = null;
+            var user = await FindUserAsync(userName, userId, email);
+            return user?.EmailConfirmed ?? false;
+        }
+
+        private async Task<User?> FindUserAsync(string? userName, string? userId, string? email)
+        {
             if (!string.IsNullOrEmpty(userName))
-                user = await GetUserByUserName(userName);
-            else if (!string.IsNullOrEmpty(userId))
-                user = await GetUserByIdAsync(userId);
+                return await GetUserByUserNameAsync(userName);
 
-            if (user == null)
-                return false;
+            if (!string.IsNullOrEmpty(userId))
+                return await GetUserByIdAsync(userId);
 
-            if (user.EmailConfirmed)
-                return true;
+            if (!string.IsNullOrEmpty(email))
+                return await GetUserByEmailAsync(email);
 
-            return false;
+            return null;
+        }
+
+        public async Task SendResetPasswordEmailAsync(User user, string baseUrl)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            //Create Url
+            var resetLink = $"{baseUrl}/Account/ResetPassword?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+            SendEmail.Send(
+                to: user.Email,
+                subject: "بازیابی رمز عبور",
+                body: $@"<!DOCTYPE html>
+<html lang='fa' dir='rtl'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>بازیابی رمز عبور</title>
+</head>
+<body style='margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; background-color: #f4f4f4; direction: rtl;'>
+    <table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background-color: #f4f4f4; padding: 20px;'>
+        <tr>
+            <td align='center'>
+                <!-- هدر -->
+                <table role='presentation' width='600' cellspacing='0' cellpadding='0' style='background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px;'>
+                    <tr>
+                        <td style='padding: 30px; text-align: center; background-color: #e94e77; border-radius: 10px 10px 0 0;'>
+                            <h1 style='color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;'>بازیابی رمز عبور - Coffee Shop</h1>
+                            <p style='color: #ffffff; margin: 10px 0 0 0; font-size: 14px;'>درخواست بازیابی رمز عبور دریافت شد.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 40px 30px; text-align: center;'>
+                            <h2 style='color: #333333; margin: 0 0 20px 0; font-size: 20px;'>برای بازیابی رمز عبور، روی دکمه زیر کلیک کنید:</h2>
+                            <p style='color: #666666; margin: 0 0 30px 0; font-size: 16px; line-height: 1.5;'>لطفاً برای تنظیم رمز عبور جدید، روی دکمه زیر کلیک کنید. این لینک تا ۱ ساعت معتبر است.</p>
+                            
+                            <!-- دکمه لینک -->
+                            <a href='{resetLink}' 
+                               style='display: inline-block; padding: 15px 30px; background-color: #e94e77; color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;'>
+                                بازیابی رمز عبور
+                            </a>
+                            
+                            <p style='color: #666666; margin: 30px 0 0 0; font-size: 14px; font-style: italic;'>
+                                اگر دکمه کار نکرد، لینک زیر را کپی کنید: <br>
+                                <a href='{resetLink}' style='color: #e94e77; text-decoration: underline;'>{resetLink}</a>
+                            </p>
+                            <p style='color: #666666; margin: 20px 0 0 0; font-size: 14px;'>
+                                اگر این درخواست از شما نیست، لطفاً این ایمیل را نادیده بگیرید.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 20px 30px; background-color: #f8f9fa; border-radius: 0 0 10px 10px; text-align: center;'>
+                            <p style='color: #999999; margin: 0; font-size: 12px; line-height: 1.4;'>
+                                اگر سؤالی دارید، با ما تماس بگیرید: <br>
+                                ایمیل: support@coffeeshop.com | تلفن: ۰۲۱-۱۲۳۴۵۶۷۸
+                            </p>
+                            <p style='color: #999999; margin: 10px 0 0 0; font-size: 12px;'>
+                                © ۲۰۲۵ Coffee Shop. تمامی حقوق محفوظ است.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>");
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string newPassword)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
         #endregion
@@ -174,9 +250,14 @@ namespace CoffeeShop.Core.Services
             return await _userManager.FindByIdAsync(userId);
         }
 
-        public async Task<User?> GetUserByUserName(string userName)
+        public async Task<User?> GetUserByUserNameAsync(string userName)
         {
             return await _userManager.FindByNameAsync(userName);
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
 
         #endregion

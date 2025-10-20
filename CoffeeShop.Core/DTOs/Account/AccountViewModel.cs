@@ -47,4 +47,36 @@ namespace CoffeeShop.Core.DTOs.Account
         [DataType(DataType.Password)]
         public required string ConfirmPassword { get; set; }
     }
+
+    public class ForgotPasswordViewModel
+    {
+        [Display(Name = "ایمیل")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید.")]
+        [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد.")]
+        [EmailAddress(ErrorMessage = "ایمیل نامعتبر")]
+        public required string Email { get; set; }
+
+        public string? ResultMessage { get; set; }
+
+        public string? Status { get; set; }
+    }
+
+    public class ResetPasswordViewModel
+    {
+        public required string UserId { get; set; }
+
+        public required string Token { get; set; }
+
+        [Display(Name = "کلمه عبور")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید.")]
+        [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد.")]
+        [DataType(DataType.Password)]
+        public required string Password { get; set; }
+
+        [Display(Name = "تکرار رمزعبور")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید.")]
+        [Compare("Password", ErrorMessage = "کلمه عبور  با تکرار آن برابر نیست")]
+        [DataType(DataType.Password)]
+        public required string ConfirmPassword { get; set; }
+    }
 }
