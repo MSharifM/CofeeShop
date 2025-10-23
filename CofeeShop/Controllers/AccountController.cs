@@ -15,7 +15,7 @@ namespace CoffeeShop.Controllers
 
         [HttpGet]
         [Route("Authentication")]
-        public IActionResult Authentication(string? returnUrl = null)
+        public IActionResult Authentication(string? returnUrl = null, bool? resetPassword = false)
         {
             if (_userService.IsUserSignIn(User))
                 return RedirectToAction("Index", "Home");
@@ -34,6 +34,8 @@ namespace CoffeeShop.Controllers
                     ConfirmPassword = string.Empty,
                 }
             };
+
+            ViewData["ResetPassword"] = resetPassword;
 
             return View(model);
         }
@@ -60,6 +62,13 @@ namespace CoffeeShop.Controllers
 
             if (!ModelState.IsValid)
                 return View("Authentication", viewModel);
+
+            var isUserExist = await _userService.GetUserByUserNameAsync(model.Email);
+            if(isUserExist == null)
+            {
+                ViewData["LoginError"] = "رمزعبور یا نام کاربری اشتباه است";
+                return View("Authentication", viewModel);
+            }
 
             var isConfirmed = await _userService.IsEmailConfirmedAsync(model.Email, null);
             if (!isConfirmed)
@@ -269,7 +278,7 @@ namespace CoffeeShop.Controllers
 
             var result = await _userService.ResetPasswordAsync(user, model.Token, model.Password);
             if (result.Succeeded)
-                return RedirectToAction("Login", new { resetPassword = true });
+                return RedirectToAction("Authentication", new { resetPassword = true });
 
             ViewData["LinkStatus"] = "Error";
             return View(model);

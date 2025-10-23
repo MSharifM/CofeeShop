@@ -20,6 +20,14 @@
 
     <!-- FORM CONTAINER -->
     <div class="form-container">
+        @{
+            if (ViewData["ResetPassword"] is bool resetPassword && resetPassword)
+            {
+                <div class="" role="alert">
+                    رمز شما با موفقیت تغییر یافت.
+                </div>
+            }
+        }
         <h2 class="form-title">Login Form</h2>
         <!-- buttons -->
         <div class="header-buttons">
@@ -39,6 +47,6 @@
     <!-- SCRIPT -->
     <script src="~/js/main.js"></script>
     @await Html.PartialAsync("_ValidationScriptsPartial")
-        
+
 </body>
 </html>
