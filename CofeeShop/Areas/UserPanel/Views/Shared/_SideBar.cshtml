@@ -1,0 +1,39 @@
+﻿@{
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString().ToLower();
+}
+
+<aside>
+    <nav>
+        <a asp-action="Index" class="@(currentAction == "index" ? "active" : "")">
+            <span>پنل کاربری</span>
+        </a>
+        <a asp-action="EditProfile" class="nav-item @(currentAction == "editprofile" ? "active" : "")">
+            <span>ویرایش پروفایل</span>
+        </a>
+        <a asp-action="ChangePassword" class="@(currentAction == "changepassword" ? "active" : "")">
+            <span>تغییر رمز عبور</span>
+        </a>
+        <a href="#">
+            <span>سفارشات من</span>
+            <span>5</span>
+        </a>
+        <a href="#">
+            <span>سبد خرید</span>
+            <span>3</span>
+        </a>
+        <a href="#">
+            <i></i>
+            <span>نظرات من</span>
+            <span>8</span>
+        </a>
+        <a href="#">
+            <span>آدرس‌ها</span>
+        </a>
+        <form asp-action="LogOut" asp-controller="Account" method="post" class="d-inline">
+            <button type="submit" class="btn btn-link nav-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>خروج</span>
+            </button>
+        </form>
+    </nav>
+</aside>

@@ -65,7 +65,7 @@ namespace CoffeeShop.Controllers
             if (!isConfirmed)
             {
                 ViewData["isConfirmed"] = false;
-                return View("Authentication", model);
+                return View("Authentication", viewModel);
             }
 
             var result = await _userService.SignInAsync(model);

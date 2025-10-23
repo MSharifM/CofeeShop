@@ -1,9 +1,11 @@
 ﻿using CoffeeShop.Core.DTOs.Account;
+using CoffeeShop.Core.DTOs.UserPanel;
 using CoffeeShop.Core.Sender;
 using CoffeeShop.Core.Services.Interfaces;
 using CoffeeShop.DataLayer.Context;
 using CoffeeShop.DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace CoffeeShop.Core.Services
@@ -258,6 +260,53 @@ namespace CoffeeShop.Core.Services
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        #endregion
+
+        #region UserPanel
+
+        public async Task<IdentityResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        {
+            var user = await GetUserByUserNameAsync(model.UserName);
+            if (user is null)
+                return IdentityResult.Failed(new IdentityError { Description = "کاربر یافت نشد" });
+
+            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            return result;
+        }
+
+        public async Task<EditProfileViewModel?> EditProfileAsync(string oldUserName, EditProfileViewModel model)
+        {
+            var user = await GetUserByUserNameAsync(oldUserName);
+
+            if (user == null)
+            {
+                model.Message = "خطا";
+                return model;
+            }
+            if (await _dbContext.Users.AnyAsync(u => u.Email == model.Email && u.Id != user.Id))
+            {
+                model.Message = "خطا: ایمیل تکراری است";
+                return model;
+            }
+
+            user.NormalizedUserName = model.Email.ToUpper();
+            user.UserName = model.Email;
+            if (model.Email != user.Email)
+            {
+                user.Email = model.Email;
+                user.NormalizedEmail = model.Email.ToUpper();
+                user.EmailConfirmed = false;
+                //ToDo send confirm mail
+            }
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+            //Update session
+            await _signInManager.RefreshSignInAsync(user);
+
+            model.Message = "اطلاعات با موفقیت تغییر یافت";
+            return model;
         }
 
         #endregion

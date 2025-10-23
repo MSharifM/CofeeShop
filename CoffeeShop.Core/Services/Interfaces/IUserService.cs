@@ -1,4 +1,5 @@
 ﻿using CoffeeShop.Core.DTOs.Account;
+using CoffeeShop.Core.DTOs.UserPanel;
 using CoffeeShop.DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -27,6 +28,12 @@ namespace CoffeeShop.Core.Services.Interfaces
         Task<User?> GetUserByUserNameAsync(string userName);
         Task<User?> GetUserByEmailAsync(string email);
 
+        #endregion
+
+        #region UserPanel
+
+        Task<IdentityResult> ChangePasswordAsync(ChangePasswordViewModel model);
+        Task<EditProfileViewModel?> EditProfileAsync(string oldUserName, EditProfileViewModel model);
 
         #endregion
     }
