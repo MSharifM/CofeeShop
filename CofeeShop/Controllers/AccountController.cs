@@ -36,6 +36,7 @@ namespace CoffeeShop.Controllers
             };
 
             ViewData["ResetPassword"] = resetPassword;
+            ViewData["ReturnUrl"] = returnUrl;
 
             return View(model);
         }
